@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101018">
+<title>DramaBox — Кино ертөнц</title>
+<style>
+:root{--bg:#101018;--panel:#191923;--panel2:#242433;--text:#f7f7fb;--muted:#aaaabd;--accent:#ff365e;--line:#303041}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{position:sticky;top:0;z-index:5;background:rgba(16,16,24,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top{max-width:1100px;margin:auto;padding:14px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{font-weight:900;font-size:21px;letter-spacing:.3px;white-space:nowrap}.logo span{color:var(--accent)}
+.search{flex:1;min-width:180px;display:flex;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:0 12px}
+.search input{width:100%;padding:12px 8px;background:transparent;border:0;outline:0;color:var(--text);font-size:15px}
+main{max-width:1100px;margin:auto;padding:18px 16px 50px}
+.hero{padding:28px 22px;border-radius:18px;background:radial-gradient(circle at 85% 20%,#633047 0,transparent 38%),linear-gradient(120deg,#25213a,#171722 65%);border:1px solid #383044;margin:8px 0 22px}
+.eyebrow{color:#ff9bb0;text-transform:uppercase;font-size:12px;font-weight:800;letter-spacing:1.5px}
+h1{font-size:clamp(26px,6vw,42px);line-height:1.1;margin:10px 0}
+.hero p{color:#d0cede;max-width:580px;line-height:1.55;margin-bottom:0}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 0 12px}
+h2{font-size:19px;margin:0}
+.count{color:var(--muted);font-size:13px}
+.categories{display:flex;gap:8px;overflow:auto;padding:2px 0 10px;scrollbar-width:thin}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:9px 13px;border-radius:999px;white-space:nowrap;cursor:pointer}
+.chip.active,.chip:hover{background:var(--accent);border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;min-width:0;transition:transform .15s,border-color .15s}
+.card:hover{transform:translateY(-2px);border-color:#5a4050}
+.poster{aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;text-align:center;padding:14px;position:relative;overflow:hidden;background:linear-gradient(145deg,var(--c1),var(--c2))}
+.poster:before,.poster:after{content:"";position:absolute;border-radius:50%;filter:blur(2px);opacity:.24}
+.poster:before{width:170px;height:170px;background:#fff;top:-70px;right:-55px}
+.poster:after{width:120px;height:120px;background:#ffcf87;bottom:-55px;left:-40px}
+.poster-art{position:relative;z-index:1;font-size:42px;filter:drop-shadow(0 4px 10px #0005)}
+.poster-title{position:absolute;z-index:1;bottom:13px;left:10px;right:10px;font-weight:900;font-size:18px;text-shadow:0 2px 10px #000;line-height:1.15}
+.tag{position:absolute;top:9px;left:9px;z-index:2;background:#101018cc;border:1px solid #ffffff25;border-radius:7px;padding:5px 7px;font-size:10px;font-weight:800}
+.info{padding:11px}
+.info h3{font-size:14px;margin:0 0 6px;line-height:1.35}
+.meta{color:var(--muted);font-size:12px;margin-bottom:10px}
+.watch{width:100%;padding:10px;border:0;border-radius:9px;background:var(--accent);color:white;font-weight:800;cursor:pointer}
+.watch:hover{filter:brightness(1.1)}
+.empty{display:none;text-align:center;padding:34px 12px;color:var(--muted);background:var(--panel);border-radius:12px}
+footer{border-top:1px solid var(--line);padding:22px 16px;text-align:center;color:var(--muted);font-size:12px;line-height:1.6}
+dialog{width:min(92vw,520px);border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--text);padding:0}
+dialog::backdrop{background:#000b;backdrop-filter:blur(4px)}
+.modal-content{padding:20px}.modal-content h2{margin-bottom:10px}.modal-content p{color:#d0cede;line-height:1.55}
+.close{float:right;border:1px solid var(--line);background:var(--panel2);color:white;border-radius:8px;padding:7px 10px;cursor:pointer}
+.modal-link{display:inline-block;margin-top:8px;background:var(--accent);color:white;text-decoration:none;padding:11px 14px;border-radius:9px;font-weight:800}
+@media(min-width:560px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.poster-title{font-size:20px}}
+@media(min-width:850px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.hero{padding:38px 34px}}
+</style>
+</head>
+<body>
+<header><div class="top">
+  <div class="logo">DRAMA<span>BOX</span></div>
+  <label class="search" aria-label="Кино хайх"><span>⌕</span><input id="search" type="search" placeholder="Киноны нэрээр хайх..." autocomplete="off"></label>
+</div></header>
+<main>
+  <section class="hero">
+    <div class="eyebrow">Таны кино булан</div>
+    <h1>Дуртай түүхээ эндээс эхлүүл.</h1>
+    <p>Кино, богино драм, адал явдал, инээдэм болон бусад төрлийг нэг дороос хайж олоорой.</p>
+  </section>
+  <div class="section-head"><h2>Ангилал</h2></div>
+  <nav id="categories" class="categories" aria-label="Киноны ангилал"></nav>
+  <div class="section-head"><h2 id="listTitle">Бүх кино</h2><span id="count" class="count"></span></div>
+  <section id="grid" class="grid" aria-live="polite"></section>
+  <div id="empty" class="empty">Кино олдсонгүй. Өөр нэрээр хайгаарай.</div>
+</main>
+<footer>© <span id="year"></span> DramaBox · Энэ бол үнэгүй загвар сайт.<br>Зөвхөн ашиглах эрхтэй постер, видео болон холбоос нэмээрэй.</footer>
+<dialog id="details"><div class="modal-content">
+  <button class="close" id="close" aria-label="Хаах">✕ Хаах</button>
+  <div class="eyebrow">Киноны мэдээлэл</div><h2 id="modalTitle"></h2><div id="modalMeta" class="meta"></div>
+  <p id="modalDesc"></p><p id="modalNote" class="meta"></p>
+  <a id="modalLink" class="modal-link" href="#" target="_blank" rel="noopener" hidden>▶ Кино үзэх</a>
+</div></dialog>
+<script>
+/* Шинэ кино нэмэх: доорх жагсаалтад шинэ объект хуулж,
+   title, category, year, emoji, colors, description болон
+   зөвшөөрөлтэй videoUrl утгуудыг өөрчилнө. */
+const movies = [
+ {title:"Нууц өв залгамжлагч",category:"Богино драм",year:2026,emoji:"👑",colors:["#5d244e","#16172d"],description:"Гэнэтийн нууц илэрснээр нэгэн гэр бүлийн амьдрал орвонгоороо өөрчлөгдөнө.",videoUrl:""},
+ {title:"Сүүлчийн даалгавар",category:"Адал явдал",year:2025,emoji:"⚡",colors:["#8b3d24","#1c1724"],description:"Аюултай даалгаврыг биелүүлэхээр зоригтой баатар замд гарна.",videoUrl:""},
+ {title:"Зүрхний нууц",category:"Хайр дурлал",year:2025,emoji:"🌹",colors:["#8d3458","#28152d"],description:"Санамсаргүй учрал хоёр хүний амьдралыг холбож өгнө.",videoUrl:""},
+ {title:"Инээдтэй хөршүүд",category:"Инээдэм",year:2024,emoji:"😂",colors:["#bd742b","#44234e"],description:"Хөршүүдийн хөгжилтэй явдлууд өдөр бүр шинэ асуудал үүсгэнэ.",videoUrl:""},
+ {title:"Шөнө дундын нууц",category:"Нууцлаг",year:2025,emoji:"🌙",colors:["#244b69","#111526"],description:"Хуучин байшинд нуугдсан нууцыг тайлахаар мөрдөгч ажиллана.",videoUrl:""},
+ {title:"Оддын аялал",category:"Шинжлэх ухаан",year:2026,emoji:"🚀",colors:["#274d8a","#251442"],description:"Алс холын гариг руу хийсэн аялал санаанд оромгүй сорилт авчирна.",videoUrl:""},
+ {title:"Сүүдрийн тулаан",category:"Адал явдал",year:2024,emoji:"🥷",colors:["#3e414c","#15151d"],description:"Нууцлаг дайчин хотыг хамгаалахын тулд үнэнийг хайна.",videoUrl:""},
+ {title:"Зуны дурсамж",category:"Хайр дурлал",year:2023,emoji:"🌅",colors:["#df865b","#4a315c"],description:"Зуны нэгэн аялал мартагдашгүй дурсамж болон үлдэнэ.",videoUrl:""}
+];
+const cats=["Бүгд",...new Set(movies.map(m=>m.category))];
+let active="Бүгд";
+const grid=document.querySelector("#grid"), search=document.querySelector("#search");
+const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function renderCats(){
+ const el=document.querySelector("#categories");el.innerHTML="";
+ cats.forEach(cat=>{const b=document.createElement("button");b.className="chip"+(cat===active?" active":"");b.textContent=cat;b.onclick=()=>{active=cat;renderCats();renderMovies()};el.appendChild(b)});
+}
+function renderMovies(){
+ const q=search.value.trim().toLocaleLowerCase("mn");
+ const filtered=movies.filter(m=>(active==="Бүгд"||m.category===active)&&(m.title+" "+m.category+" "+m.year).toLocaleLowerCase("mn").includes(q));
+ grid.innerHTML="";
+ filtered.forEach((m)=>{const original=movies.indexOf(m);const card=document.createElement("article");card.className="card";
+ card.innerHTML=`<div class="poster" style="--c1:${m.colors[0]};--c2:${m.colors[1]}"><span class="tag">${escapeHtml(m.category)}</span><span class="poster-art">${escapeHtml(m.emoji)}</span><span class="poster-title">${escapeHtml(m.title)}</span></div><div class="info"><h3>${escapeHtml(m.title)}</h3><div class="meta">${escapeHtml(m.year)} · ${escapeHtml(m.category)}</div><button class="watch" data-index="${original}">Дэлгэрэнгүй</button></div>`;
+ card.querySelector("button").onclick=()=>openMovie(m);grid.appendChild(card)});
+ document.querySelector("#count").textContent=`${filtered.length} кино`;
+ document.querySelector("#listTitle").textContent=active==="Бүгд"?"Бүх кино":active;
+ document.querySelector("#empty").style.display=filtered.length?"none":"block";
+}
+function openMovie(m){
+ document.querySelector("#modalTitle").textContent=m.title;
+ document.querySelector("#modalMeta").textContent=`${m.year} · ${m.category}`;
+ document.querySelector("#modalDesc").textContent=m.description;
+ const link=document.querySelector("#modalLink"),note=document.querySelector("#modalNote");
+ if(m.videoUrl){link.href=m.videoUrl;link.hidden=false;note.textContent="Видео шинэ цонхонд нээгдэнэ."}
+ else{link.hidden=true;note.textContent="Одоогоор видео холбоос нэмээгүй байна. Код доторх videoUrl талбарт өөрийн зөвшөөрөлтэй видеоныхоо URL-ийг оруулна уу."}
+ document.querySelector("#details").showModal();
+}
+search.addEventListener("input",renderMovies);
+document.querySelector("#close").onclick=()=>document.querySelector("#details").close();
+document.querySelector("#details").addEventListener("click",e=>{if(e.target.id==="details")e.target.close()});
+document.querySelector("#year").textContent=new Date().getFullYear();
+renderCats();renderMovies();
+</script>
+</body>
+</html>
